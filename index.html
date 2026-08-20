@@ -1,3 +1,1088 @@
 <!DOCTYPE html>
 <html lang="de">
-</body></html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniLab</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #111827;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.app {
+    width: 100%;
+    max-width: 430px;
+    padding: 40px 20px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 42px;
+    margin: 20px 0 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #9ca3af;
+    margin-bottom: 30px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.menu-button,
+.back,
+.tool-button {
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 20px;
+    background: #1f2937;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.menu-button:active,
+.back:active,
+.tool-button:active {
+    transform: scale(0.97);
+}
+
+.calculator,
+.game,
+.tools,
+.image-generator {
+    display: none;
+}
+
+/* RECHNER */
+
+.display {
+    background: #1f2937;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 15px;
+    text-align: right;
+    font-size: 42px;
+    min-height: 80px;
+    overflow: hidden;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.calc-button {
+    height: 75px;
+    border: none;
+    border-radius: 18px;
+    background: #374151;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.operator {
+    background: #4b5563;
+}
+
+.equals {
+    background: #2563eb;
+}
+
+.clear {
+    background: #dc2626;
+}
+
+/* SPIEL */
+
+.game-info {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.game-info p {
+    color: #9ca3af;
+}
+
+.reaction-area {
+    height: 330px;
+    border-radius: 25px;
+    background: #1f2937;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.reaction-button {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    border: none;
+    background: #374151;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.reaction-button.ready {
+    background: #16a34a;
+}
+
+.reaction-button.too-early {
+    background: #dc2626;
+}
+
+.result {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    min-height: 35px;
+}
+
+.best {
+    text-align: center;
+    color: #9ca3af;
+    margin: 15px 0 20px;
+}
+
+/* TOOLS */
+
+.tool-card {
+    background: #1f2937;
+    border-radius: 22px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.tool-card h2 {
+    margin-top: 0;
+}
+
+.tool-card p {
+    color: #9ca3af;
+}
+
+.tool-result {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 15px;
+}
+
+/* BILDGENERATOR */
+
+.image-generator-box {
+    background: #1f2937;
+    border-radius: 22px;
+    padding: 20px;
+}
+
+.prompt {
+    width: 100%;
+    min-height: 110px;
+    resize: none;
+    border: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 17px;
+    font-family: inherit;
+    background: #374151;
+    color: white;
+    outline: none;
+}
+
+.prompt::placeholder {
+    color: #9ca3af;
+}
+
+.generate-button {
+    width: 100%;
+    padding: 18px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 18px;
+    background: #2563eb;
+    color: white;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.image-preview {
+    margin-top: 20px;
+    min-height: 220px;
+    border-radius: 18px;
+    background: #374151;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    color: #9ca3af;
+}
+
+/* LINKS */
+
+.link-button {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    background: #1f2937;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- STARTSEITE -->
+
+<div id="home">
+
+<h1>📱 MiniLab</h1>
+
+<div class="subtitle">
+Deine kleine All-in-One-App
+</div>
+
+<button class="menu-button" onclick="openGame()">
+🎮 Spiel
+</button>
+
+<button class="menu-button" onclick="openCalculator()">
+🧮 Taschenrechner
+</button>
+
+<button class="menu-button" onclick="openTools()">
+🛠️ Tools
+</button>
+
+<a
+class="link-button"
+href="https://www.youtube.com/"
+target="_blank"
+>
+▶️ YouTube
+</a>
+
+<a
+class="link-button"
+href="https://open.spotify.com/"
+target="_blank"
+>
+🎵 Spotify
+</a>
+
+</div>
+
+
+<!-- SPIEL -->
+
+<div id="game" class="game">
+
+<h1>🎮</h1>
+
+<div class="game-info">
+
+<h2>Reaktionstest</h2>
+
+<p>
+Warte auf Grün und tippe so schnell wie möglich!
+</p>
+
+</div>
+
+<div class="reaction-area">
+
+<button
+id="reactionButton"
+class="reaction-button"
+onclick="reactionClick()"
+>
+START
+</button>
+
+</div>
+
+<div id="result" class="result"></div>
+
+<div id="best" class="best">
+Bester Wert: —
+</div>
+
+<button
+id="startGameButton"
+class="tool-button"
+onclick="startGame()"
+>
+Spiel starten
+</button>
+
+<button class="back" onclick="goHome()">
+← Zur Startseite
+</button>
+
+</div>
+
+
+<!-- RECHNER -->
+
+<div id="calculator" class="calculator">
+
+<h1>🧮</h1>
+
+<div id="display" class="display">
+0
+</div>
+
+<div class="buttons">
+
+<button class="calc-button clear"
+onclick="clearCalculator()">C</button>
+
+<button class="calc-button"
+onclick="deleteLast()">⌫</button>
+
+<button class="calc-button operator"
+onclick="percent()">%</button>
+
+<button class="calc-button operator"
+onclick="chooseOperator('/')">÷</button>
+
+<button class="calc-button"
+onclick="number('7')">7</button>
+
+<button class="calc-button"
+onclick="number('8')">8</button>
+
+<button class="calc-button"
+onclick="number('9')">9</button>
+
+<button class="calc-button operator"
+onclick="chooseOperator('*')">×</button>
+
+<button class="calc-button"
+onclick="number('4')">4</button>
+
+<button class="calc-button"
+onclick="number('5')">5</button>
+
+<button class="calc-button"
+onclick="number('6')">6</button>
+
+<button class="calc-button operator"
+onclick="chooseOperator('-')">−</button>
+
+<button class="calc-button"
+onclick="number('1')">1</button>
+
+<button class="calc-button"
+onclick="number('2')">2</button>
+
+<button class="calc-button"
+onclick="number('3')">3</button>
+
+<button class="calc-button operator"
+onclick="chooseOperator('+')">+</button>
+
+<button class="calc-button"
+onclick="number('0')">0</button>
+
+<button class="calc-button"
+onclick="decimal()">.</button>
+
+<button class="calc-button equals"
+onclick="calculate()">=</button>
+
+<button class="calc-button operator"
+onclick="calculate()">↵</button>
+
+</div>
+
+<button class="back" onclick="goHome()">
+← Zur Startseite
+</button>
+
+</div>
+
+
+<!-- TOOLS -->
+
+<div id="tools" class="tools">
+
+<h1>🛠️</h1>
+
+<div class="subtitle">
+Kleine praktische Werkzeuge
+</div>
+
+
+<div class="tool-card">
+
+<h2>🔢 Zufallszahl</h2>
+
+<p>
+Erzeuge eine zufällige Zahl zwischen 1 und 100.
+</p>
+
+<div id="randomResult"
+class="tool-result">—</div>
+
+<button
+class="tool-button"
+onclick="randomNumber()">
+Zufallszahl erzeugen
+</button>
+
+</div>
+
+
+<div class="tool-card">
+
+<h2>🎲 Würfel</h2>
+
+<p>
+Wirf einen virtuellen Würfel.
+</p>
+
+<div id="diceResult"
+class="tool-result">🎲</div>
+
+<button
+class="tool-button"
+onclick="rollDice()">
+Würfeln
+</button>
+
+</div>
+
+
+<div class="tool-card">
+
+<h2>🪙 Münzwurf</h2>
+
+<p>
+Kopf oder Zahl?
+</p>
+
+<div id="coinResult"
+class="tool-result">🪙</div>
+
+<button
+class="tool-button"
+onclick="flipCoin()">
+Münze werfen
+</button>
+
+</div>
+
+
+<button
+class="tool-button"
+onclick="openImageGenerator()">
+🎨 Bildgenerator
+</button>
+
+
+<button class="back"
+onclick="goHome()">
+← Zur Startseite
+</button>
+
+</div>
+
+
+<!-- BILDGENERATOR -->
+
+<div
+id="image-generator"
+class="image-generator">
+
+<h1>🎨</h1>
+
+<div class="subtitle">
+Dein Bildgenerator
+</div>
+
+<div class="image-generator-box">
+
+<textarea
+id="imagePrompt"
+class="prompt"
+placeholder="Beschreibe dein Bild...">
+</textarea>
+
+<button
+class="generate-button"
+onclick="generateImage()">
+✨ Bild generieren
+</button>
+
+<div
+id="imagePreview"
+class="image-preview">
+Hier erscheint dein Bild.
+</div>
+
+</div>
+
+<button class="back"
+onclick="goHome()">
+← Zur Startseite
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* NAVIGATION */
+
+function hideAll() {
+
+    document.getElementById("home").style.display = "none";
+
+    document.getElementById("game").style.display = "none";
+
+    document.getElementById("calculator").style.display = "none";
+
+    document.getElementById("tools").style.display = "none";
+
+    document.getElementById("image-generator").style.display = "none";
+}
+
+function openGame() {
+
+    hideAll();
+
+    document.getElementById("game").style.display = "block";
+
+    resetGame();
+}
+
+function openCalculator() {
+
+    hideAll();
+
+    document.getElementById("calculator").style.display = "block";
+
+    clearCalculator();
+}
+
+function openTools() {
+
+    hideAll();
+
+    document.getElementById("tools").style.display = "block";
+}
+
+function openImageGenerator() {
+
+    hideAll();
+
+    document.getElementById("image-generator").style.display = "block";
+}
+
+function goHome() {
+
+    hideAll();
+
+    document.getElementById("home").style.display = "block";
+}
+
+
+/* TOOLS */
+
+function randomNumber() {
+
+    const number =
+        Math.floor(Math.random() * 100) + 1;
+
+    document.getElementById("randomResult")
+        .textContent = number;
+}
+
+function rollDice() {
+
+    const dice =
+        Math.floor(Math.random() * 6) + 1;
+
+    const faces = [
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+    document.getElementById("diceResult")
+        .textContent = faces[dice - 1];
+}
+
+function flipCoin() {
+
+    const result =
+        Math.random() < 0.5
+        ? "🙂 Kopf"
+        : "🔵 Zahl";
+
+    document.getElementById("coinResult")
+        .textContent = result;
+}
+
+
+/* BILDGENERATOR */
+
+function generateImage() {
+
+    const prompt =
+        document.getElementById("imagePrompt")
+        .value.trim();
+
+    const preview =
+        document.getElementById("imagePreview");
+
+    if (!prompt) {
+
+        preview.textContent =
+            "Bitte beschreibe zuerst dein Bild.";
+
+        return;
+    }
+
+    preview.innerHTML =
+        "✨ Bildgenerator vorbereitet.<br><br>" +
+        "Deine Beschreibung:<br><strong>" +
+        escapeHTML(prompt) +
+        "</strong>";
+}
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+}
+
+
+/* REAKTIONSSPIEL */
+
+let gameStarted = false;
+
+let ready = false;
+
+let startTime = 0;
+
+let timer = null;
+
+const reactionButton =
+    document.getElementById("reactionButton");
+
+const result =
+    document.getElementById("result");
+
+const best =
+    document.getElementById("best");
+
+const startGameButton =
+    document.getElementById("startGameButton");
+
+
+function startGame() {
+
+    if (gameStarted) return;
+
+    gameStarted = true;
+
+    ready = false;
+
+    result.textContent = "";
+
+    reactionButton.textContent =
+        "WARTEN …";
+
+    reactionButton.className =
+        "reaction-button";
+
+    startGameButton.disabled = true;
+
+    const delay =
+        Math.floor(Math.random() * 3000) + 1500;
+
+    timer =
+        setTimeout(() => {
+
+            ready = true;
+
+            startTime =
+                performance.now();
+
+            reactionButton.textContent =
+                "JETZT!";
+
+            reactionButton.className =
+                "reaction-button ready";
+
+        }, delay);
+}
+
+
+function reactionClick() {
+
+    if (!gameStarted) return;
+
+    if (!ready) {
+
+        clearTimeout(timer);
+
+        reactionButton.textContent =
+            "ZU FRÜH!";
+
+        reactionButton.className =
+            "reaction-button too-early";
+
+        result.textContent =
+            "😅 Zu früh gedrückt!";
+
+        finishGame();
+
+        return;
+    }
+
+    const reactionTime =
+        Math.round(
+            performance.now() - startTime
+        );
+
+    result.textContent =
+        `⚡ ${reactionTime} ms`;
+
+    reactionButton.textContent =
+        "NOCHMAL?";
+
+    saveBestScore(reactionTime);
+
+    finishGame();
+}
+
+
+function finishGame() {
+
+    gameStarted = false;
+
+    ready = false;
+
+    startGameButton.disabled = false;
+
+    startGameButton.textContent =
+        "Nochmal spielen";
+}
+
+
+function resetGame() {
+
+    clearTimeout(timer);
+
+    gameStarted = false;
+
+    ready = false;
+
+    reactionButton.textContent =
+        "START";
+
+    reactionButton.className =
+        "reaction-button";
+
+    result.textContent = "";
+
+    startGameButton.disabled = false;
+
+    startGameButton.textContent =
+        "Spiel starten";
+
+    showBestScore();
+}
+
+
+function saveBestScore(score) {
+
+    const oldBest =
+        localStorage.getItem("miniLabBest");
+
+    if (
+        oldBest === null ||
+        score < Number(oldBest)
+    ) {
+
+        localStorage.setItem(
+            "miniLabBest",
+            score
+        );
+
+        best.textContent =
+            `🏆 Neuer Rekord: ${score} ms`;
+
+    } else {
+
+        showBestScore();
+    }
+}
+
+
+function showBestScore() {
+
+    const saved =
+        localStorage.getItem("miniLabBest");
+
+    if (saved !== null) {
+
+        best.textContent =
+            `🏆 Bester Wert: ${saved} ms`;
+
+    } else {
+
+        best.textContent =
+            "Bester Wert: —";
+    }
+}
+
+
+/* RECHNER */
+
+let currentNumber = "0";
+
+let previousNumber = null;
+
+let operator = null;
+
+let waitingForNumber = false;
+
+const display =
+    document.getElementById("display");
+
+
+function updateDisplay() {
+
+    display.textContent =
+        currentNumber;
+}
+
+
+function number(num) {
+
+    if (waitingForNumber) {
+
+        currentNumber = num;
+
+        waitingForNumber = false;
+
+    } else if (currentNumber === "0") {
+
+        currentNumber = num;
+
+    } else {
+
+        currentNumber += num;
+    }
+
+    updateDisplay();
+}
+
+
+function decimal() {
+
+    if (waitingForNumber) {
+
+        currentNumber = "0.";
+
+        waitingForNumber = false;
+
+    } else if (!currentNumber.includes(".")) {
+
+        currentNumber += ".";
+    }
+
+    updateDisplay();
+}
+
+
+function chooseOperator(op) {
+
+    if (
+        operator !== null &&
+        !waitingForNumber
+    ) {
+
+        calculate();
+    }
+
+    previousNumber =
+        parseFloat(currentNumber);
+
+    operator = op;
+
+    waitingForNumber = true;
+}
+
+
+function calculate() {
+
+    if (
+        operator === null ||
+        previousNumber === null
+    ) return;
+
+    const current =
+        parseFloat(currentNumber);
+
+    let value;
+
+
+    switch(operator) {
+
+        case "+":
+
+            value =
+                previousNumber + current;
+
+            break;
+
+        case "-":
+
+            value =
+                previousNumber - current;
+
+            break;
+
+        case "*":
+
+            value =
+                previousNumber * current;
+
+            break;
+
+        case "/":
+
+            if (current === 0) {
+
+                currentNumber =
+                    "Fehler";
+
+                previousNumber =
+                    null;
+
+                operator =
+                    null;
+
+                updateDisplay();
+
+                return;
+            }
+
+            value =
+                previousNumber / current;
+
+            break;
+    }
+
+
+    currentNumber =
+        String(
+            Math.round(
+                value * 100000000
+            ) / 100000000
+        );
+
+    previousNumber =
+        null;
+
+    operator =
+        null;
+
+    waitingForNumber =
+        true;
+
+    updateDisplay();
+}
+
+
+function clearCalculator() {
+
+    currentNumber =
+        "0";
+
+    previousNumber =
+        null;
+
+    operator =
+        null;
+
+    waitingForNumber =
+        false;
+
+    updateDisplay();
+}
+
+
+function deleteLast() {
+
+    if (currentNumber.length > 1) {
+
+        currentNumber =
+            currentNumber.slice(0, -1);
+
+    } else {
+
+        currentNumber =
+            "0";
+    }
+
+    updateDisplay();
+}
+
+
+function percent() {
+
+    currentNumber =
+        String(
+            parseFloat(currentNumber) / 100
+        );
+
+    updateDisplay();
+}
+
+</script>
+
+</body>
+</html>
